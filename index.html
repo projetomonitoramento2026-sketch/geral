@@ -4,77 +4,245 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Monitor de Torres TRIVIA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; background: #0f172a; color: #f8fafc; min-height: 100vh; padding: 0 0 30px 0; }
+        :root {
+            /* Paleta clareada e mais moderna (Slate) */
+            --bg-dark: #1e293b;
+            --bg-gradient: radial-gradient(circle at top, #334155 0%, #1e293b 100%);
+            --card-bg: #2b394f;
+            --text-main: #f8fafc;
+            --text-muted: #cbd5e1;
+            --color-ok: #10b981;
+            --color-fail: #ef4444;
+            --color-off: #94a3b8;
+            --card-border: #475569;
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            color: var(--text-main); 
+            min-height: 100vh; 
+            margin: 0;
+            padding: 0; /* Zerado para a imagem colar no topo */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+				
+		.logo-header {
+			width: 100%;
+			height: 100%; /* ocupa toda altura da tela */
+			overflow: hidden;
+		}
+
+		.logo-header img { 
+			width: 100%;
+			height: 100%;
+			object-fit: cover; /* preenche toda a tela */
+			display: block;
+		}
+
+        /* Container para alinhar o conteúdo principal */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            padding: 0 20px 60px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-sizing: border-box;
+        }
+
+        h1 { 
+            text-align: center; 
+            font-size: 2rem; 
+            margin: 0 0 15px 0; 
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
         
-        /* Header Transparente */
-        .logo-header { width: 100%; background: transparent; line-height: 0; margin-bottom: 0; padding: 0; }
-        .logo-header img { width: 100%; height: auto; display: block; max-height: 150px; object-fit: contain; }
+        .status-bar { 
+            text-align: center; 
+            margin-bottom: 30px; 
+        }
+        .status-bar span { 
+            background: var(--card-bg); 
+            padding: 8px 20px; 
+            border-radius: 30px; 
+            font-size: 0.85rem; 
+            font-weight: 600;
+            border: 1px solid var(--card-border);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        .status-bar span.ok { color: var(--color-ok); border-color: rgba(16,185,129,0.4); }
+        .status-bar span.err { color: var(--color-fail); border-color: rgba(239,68,68,0.4); }
 
-        h1 { text-align: center; font-size: 1.8rem; margin: 10px 0 5px 0; }
-        .subtitle { text-align: center; color: #64748b; margin-bottom: 20px; font-size: 0.8rem; }
+        /* Contadores Horizontais */
+        .counter {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 40px;
+        }
         
-        .status-bar { text-align: center; margin-bottom: 20px; }
-        .status-bar span { background: #1e293b; padding: 6px 16px; border-radius: 20px; font-size: 0.75rem; color: #94a3b8; }
-        .status-bar span.ok { color: #10b981; }
-        .status-bar span.err { color: #ef4444; }
+        .counter-item {
+            background: var(--card-bg);
+            padding: 15px 25px;
+            border-radius: 16px;
+            min-width: 140px;
+            text-align: center;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        .counter-item:hover {
+            transform: translateY(-3px);
+        }
 
-        /* Contadores */
-        .counter { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; padding: 0 20px; }
-        .counter-item { text-align: center; background: #1e293b; padding: 10px 20px; border-radius: 12px; min-width: 120px; }
-        .counter-item .num { font-size: 1.8rem; font-weight: bold; }
-        .counter-item .lbl { font-size: 0.65rem; color: #64748b; text-transform: uppercase; }
-        .num.green { color: #10b981; }
-        .num.red { color: #ef4444; }
-        .num.gray { color: #64748b; }
-
-        /* Grid e Cards Compactos (Tamanho similar aos contadores) */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; max-width: 1200px; margin: 0 auto; padding: 0 20px; }
-        .card { background: #1e293b; border-radius: 12px; padding: 12px 10px; border-left: 4px solid #475569; transition: all 0.4s ease; display: flex; flex-direction: column; align-items: center; text-align: center; min-height: 140px; }
-        .card.ok { border-left-color: #10b981; background: linear-gradient(135deg, #1e293b, #0f2a1e); }
-        .card.fail { border-left-color: #ef4444; background: linear-gradient(135deg, #1e293b, #2a0f0f); }
-        .card.offline { border-left-color: #475569; opacity: 0.6; }
-
-        .card-name { font-size: 0.75rem; font-weight: bold; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
+        .counter-item .num { font-size: 2.2rem; font-weight: 700; line-height: 1; margin-bottom: 5px; }
+        .counter-item .lbl { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 600;}
         
-        .status-circle { width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; font-weight: bold; color: #fff; margin-bottom: 10px; line-height: 1; padding: 5px; }
-        
-        .ok .status-circle { background: #10b981; box-shadow: 0 0 12px rgba(16,185,129,0.4); animation: pulse-green 2s infinite; }
-        .fail .status-circle { background: #ef4444; box-shadow: 0 0 12px rgba(239,68,68,0.4); animation: pulse-red 1s infinite; }
-        .offline .status-circle { background: #475569; }
+        .num.green { color: var(--color-ok); text-shadow: 0 0 15px rgba(16,185,129,0.3); }
+        .num.red { color: var(--color-fail); text-shadow: 0 0 15px rgba(239,68,68,0.3); }
+        .num.gray { color: var(--color-off); }
 
-        @keyframes pulse-green { 0%,100%{box-shadow:0 0 12px rgba(16,185,129,0.4)} 50%{box-shadow:0 0 20px rgba(16,185,129,0.7)} }
-        @keyframes pulse-red { 0%,100%{box-shadow:0 0 12px rgba(239,68,68,0.4)} 50%{box-shadow:0 0 20px rgba(239,68,68,0.7)} }
+        /* Grid de Cards */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 20px;
+            width: 100%;
+        }
 
-        .card-footer { margin-top: auto; padding-top: 8px; border-top: 1px solid #334155; font-size: 0.6rem; color: #64748b; width: 100%; text-align: center; }
+        .card { 
+            background: var(--card-bg); 
+            border-radius: 16px; 
+            padding: 20px 15px; 
+            border: 1px solid var(--card-border);
+            border-top: 5px solid var(--card-border);
+            transition: all 0.3s ease; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            text-align: center; 
+            min-height: 140px; 
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.15);
+        }
         
-        .empty { grid-column: 1/-1; text-align: center; padding: 40px; color: #475569; }
-        .loader { display: inline-block; width: 12px; height: 12px; border: 2px solid #334155; border-top-color: #38bdf8; border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 8px; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3); }
+
+        .card.ok { border-top-color: var(--color-ok); background: linear-gradient(180deg, rgba(16,185,129,0.08) 0%, var(--card-bg) 40%); }
+        .card.fail { border-top-color: var(--color-fail); background: linear-gradient(180deg, rgba(239,68,68,0.08) 0%, var(--card-bg) 40%); }
+        .card.offline { border-top-color: var(--color-off); opacity: 0.8; }
+
+        .card-name { 
+            font-size: 0.85rem; 
+            font-weight: 700; 
+            margin-bottom: 15px; 
+            color: var(--text-main);
+            text-transform: uppercase; 
+            letter-spacing: 0.5px; 
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+            width: 100%; 
+        }
+        
+        .status-circle { 
+            width: 60px; 
+            height: 60px; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 0.7rem; 
+            font-weight: 700; 
+            color: #fff; 
+            margin-bottom: 15px; 
+            letter-spacing: 0.5px;
+        }
+        
+        .ok .status-circle { background: var(--color-ok); animation: pulse-green 2s infinite; }
+        .fail .status-circle { background: var(--color-fail); animation: pulse-red 1s infinite; }
+        .offline .status-circle { background: var(--color-off); }
+
+        @keyframes pulse-green { 0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,0.4)} 70%{box-shadow:0 0 0 10px rgba(16,185,129,0)} }
+        @keyframes pulse-red { 0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0.6)} 70%{box-shadow:0 0 0 15px rgba(239,68,68,0)} }
+
+        .card-footer { 
+            margin-top: auto; 
+            padding-top: 12px; 
+            border-top: 1px solid var(--card-border); 
+            font-size: 0.7rem; 
+            color: var(--text-muted); 
+            width: 100%; 
+            text-align: center; 
+            font-weight: 600;
+        }
+        
+        .empty { grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted); font-size: 1.1rem; }
+        
+        .loader { 
+            display: inline-block; 
+            width: 14px; 
+            height: 14px; 
+            border: 2px solid var(--card-border); 
+            border-top-color: #38bdf8; 
+            border-radius: 50%; 
+            animation: spin 0.8s linear infinite; 
+        }
         @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: var(--card-border); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--color-off); }
     </style>
 </head>
 <body>
 
 <div class="logo-header">
-    <img src="logo_w-1.png" alt="Logo Trivia">
+    <img src="logo_w-1.png" alt="Banner Trivia">
 </div>
 
-<h1>📡 Monitor de Torres TRIVIA</h1>
-<p class="subtitle">Atualização automática a cada 10 segundos</p>
+<div class="container">
+    <h1>📡 Monitor Geral Trivia</h1>
 
-<div class="status-bar">
-    <span id="conn-status"><span class="loader"></span>Conectando...</span>
-</div>
+    <div class="status-bar">
+        <span id="conn-status"><span class="loader"></span> Conectando...</span>
+    </div>
 
-<div class="counter">
-    <div class="counter-item"><div class="num green" id="cnt-ok">-</div><div class="lbl">Operacionais</div></div>
-    <div class="counter-item"><div class="num red" id="cnt-fail">-</div><div class="lbl">Falhas</div></div>
-    <div class="counter-item"><div class="num gray" id="cnt-off">-</div><div class="lbl">Sem Resposta</div></div>
-</div>
+    <div class="counter">
+        <div class="counter-item">
+            <div class="num green" id="cnt-ok">-</div>
+            <div class="lbl">Operacionais</div>
+        </div>
+        <div class="counter-item">
+            <div class="num red" id="cnt-fail">-</div>
+            <div class="lbl">Falhas</div>
+        </div>
+        <div class="counter-item">
+            <div class="num gray" id="cnt-off">-</div>
+            <div class="lbl">Sem Resposta</div>
+        </div>
+    </div>
 
-<div id="grid" class="grid">
-    <div class="empty"><span class="loader"></span> Carregando torres...</div>
+    <div id="grid" class="grid">
+        <div class="empty"><span class="loader"></span> Carregando torres...</div>
+    </div>
 </div>
 
 <script>
@@ -89,21 +257,26 @@
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const data = await res.json();
             renderCards(data);
-            document.getElementById('conn-status').className = 'ok';
-            document.getElementById('conn-status').innerHTML = '🟢 Conectado ao Supabase';
+            
+            const connStatus = document.getElementById('conn-status');
+            connStatus.className = 'ok';
+            connStatus.innerHTML = '🟢 Conectado ao Supabase';
         } catch (err) {
-            document.getElementById('conn-status').className = 'err';
-            document.getElementById('conn-status').innerHTML = `🔴 Erro: ${err.message}`;
+            const connStatus = document.getElementById('conn-status');
+            connStatus.className = 'err';
+            connStatus.innerHTML = `🔴 Erro: ${err.message}`;
         }
     }
 
     function renderCards(data) {
         const grid = document.getElementById('grid');
         let cntOk = 0, cntFail = 0, cntOff = 0;
+        
         if (!data || data.length === 0) {
-            grid.innerHTML = '<div class="empty">Nenhuma torre encontrada no banco.</div>';
+            grid.innerHTML = '<div class="empty">Nenhuma torre encontrada no banco de dados.</div>';
             return;
         }
+        
         grid.innerHTML = '';
         data.forEach(t => {
             const now = new Date();
@@ -114,16 +287,17 @@
             let cls = 'fail', label = 'FALHA';
             if (diffMin > 15)  { cls = 'offline'; label = 'OFFLINE'; cntOff++; }
             else if (t.is_ok)  { cls = 'ok';      label = 'OK';      cntOk++;  }
-            else                {                                      cntFail++; }
+            else               {                                     cntFail++; }
 
             const card = document.createElement('div');
             card.className = `card ${cls}`;
             card.innerHTML = `
-                <div class="card-name">${t.device_name}</div>
+                <div class="card-name" title="${t.device_name}">${t.device_name}</div>
                 <div class="status-circle">${label}</div>
-                <div class="card-footer">🕐 ${dataFormatada.split(',')[1]}</div>`;
+                <div class="card-footer">🕐 ${dataFormatada.split(',')[1] || '--:--'}</div>`;
             grid.appendChild(card);
         });
+        
         document.getElementById('cnt-ok').textContent   = cntOk;
         document.getElementById('cnt-fail').textContent = cntFail;
         document.getElementById('cnt-off').textContent  = cntOff;
