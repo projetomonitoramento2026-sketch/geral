@@ -285,7 +285,7 @@
             const diffMin = isNaN(last) ? 9999 : Math.floor((now - last) / 60000);
             
             let cls = 'fail', label = 'FALHA';
-            if (diffMin > 1)  { cls = 'offline'; label = 'OFFLINE'; cntOff++; }
+            if (diffMin > 0.15)  { cls = 'offline'; label = 'OFFLINE'; cntOff++; }
             else if (t.is_ok)  { cls = 'ok';      label = 'OK';      cntOk++;  }
             else               {                                     cntFail++; }
 
