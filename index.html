@@ -147,18 +147,23 @@
         .card.fail { border-top-color: var(--color-fail); background: linear-gradient(180deg, rgba(239,68,68,0.08) 0%, var(--card-bg) 40%); }
         .card.offline { border-top-color: var(--color-off); opacity: 0.8; }
 
-        .card-name { 
-            font-size: 0.85rem; 
-            font-weight: 700; 
-            margin-bottom: 15px; 
-            color: var(--text-main);
-            text-transform: uppercase; 
-            letter-spacing: 0.5px; 
-            white-space: nowrap; 
-            overflow: hidden; 
-            text-overflow: ellipsis; 
-            width: 100%; 
-        }
+.card-name { 
+    font-size: 0.85rem; 
+    font-weight: 700; 
+    margin-bottom: 15px; 
+    color: var(--text-main);
+    text-transform: uppercase; 
+    letter-spacing: 0.5px;
+
+    width: 100%;
+
+    white-space: normal;
+    overflow-wrap: break-word;
+    word-break: break-word;
+
+    line-height: 1.2;
+    text-align: center;
+}
         
         .status-circle { 
             width: 60px; 
