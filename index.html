@@ -1,792 +1,310 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Monitor de Torres</title>
-<style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; display: flex; height: 100vh; overflow: hidden; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitor de Torres TRIVIA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Paleta clareada e mais moderna (Slate) */
+            --bg-dark: #1e293b;
+            --bg-gradient: radial-gradient(circle at top, #334155 0%, #1e293b 100%);
+            --card-bg: #2b394f;
+            --text-main: #f8fafc;
+            --text-muted: #cbd5e1;
+            --color-ok: #10b981;
+            --color-fail: #ef4444;
+            --color-off: #94a3b8;
+            --card-border: #475569;
+        }
 
-  /* SIDEBAR */
-  .sidebar {
-    width: 220px; min-width: 220px;
-    background: #1a2340;
-    display: flex; flex-direction: column;
-    transition: width 0.3s;
-    z-index: 100;
-  }
-  .sidebar.collapsed { width: 60px; min-width: 60px; }
-  .sidebar-header {
-    display: flex; align-items: center; gap: 10px;
-    padding: 16px 14px;
-    background: #141c33;
-    border-bottom: 1px solid #2a3560;
-  }
-  .logo-area { display: flex; align-items: center; gap: 8px; overflow: hidden; }
-  .logo-icon { font-size: 22px; flex-shrink: 0; }
-  .logo-text { color: white; font-size: 15px; font-weight: 700; white-space: nowrap; overflow: hidden; }
-  .logo-text span { color: #f97316; }
-  .toggle-btn {
-    margin-left: auto; background: none; border: none;
-    color: #aab; cursor: pointer; font-size: 18px; flex-shrink: 0;
-  }
-  .nav { flex: 1; padding: 12px 0; }
-  .nav-item {
-    display: flex; align-items: center; gap: 12px;
-    padding: 12px 16px; cursor: pointer;
-    color: #8899bb; font-size: 14px; font-weight: 500;
-    border-left: 3px solid transparent;
-    transition: all 0.2s; white-space: nowrap; overflow: hidden;
-  }
-  .nav-item:hover { background: #243060; color: #fff; }
-  .nav-item.active { background: #243060; color: #fff; border-left-color: #3b82f6; }
-  .nav-item .nav-icon { font-size: 18px; flex-shrink: 0; }
-  .nav-label { overflow: hidden; }
-  .sidebar.collapsed .nav-label { display: none; }
-  .sidebar.collapsed .logo-text { display: none; }
-  .sidebar-footer {
-    padding: 14px 16px;
-    border-top: 1px solid #2a3560;
-    color: #556; font-size: 11px;
-    white-space: nowrap; overflow: hidden;
-  }
-  .sidebar.collapsed .sidebar-footer { display: none; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            color: var(--text-main); 
+            min-height: 100vh; 
+            margin: 0;
+            padding: 0; /* Zerado para a imagem colar no topo */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+				
+		.logo-header {
+			width: 100%;
+			height: 100%; /* ocupa toda altura da tela */
+			overflow: hidden;
+		}
 
-  /* MAIN */
-  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+		.logo-header img { 
+			width: 100%;
+			height: 100%;
+			object-fit: cover; /* preenche toda a tela */
+			display: block;
+		}
 
-  /* TOPBAR */
-  .topbar {
-    background: #1e3a8a;
-    padding: 0 24px;
-    height: 56px;
-    display: flex; align-items: center; justify-content: space-between;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  }
-  .topbar-left { display: flex; align-items: center; gap: 12px; }
-  .topbar-title { color: white; font-size: 18px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-  .topbar-right { display: flex; align-items: center; gap: 16px; }
-  .status-badge {
-    background: #22c55e22; border: 1px solid #22c55e;
-    color: #22c55e; padding: 4px 12px; border-radius: 20px;
-    font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 6px;
-  }
-  .dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; animation: pulse 2s infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-  .btn-refresh {
-    background: #3b82f6; color: white; border: none;
-    padding: 7px 14px; border-radius: 8px; cursor: pointer;
-    font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 6px;
-  }
-  .btn-refresh:hover { background: #2563eb; }
+        /* Container para alinhar o conteúdo principal */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            padding: 0 20px 60px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-sizing: border-box;
+        }
 
-  /* CONTENT */
-  .content { flex: 1; overflow-y: auto; padding: 24px; }
+        h1 { 
+            text-align: center; 
+            font-size: 2rem; 
+            margin: 0 0 15px 0; 
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .status-bar { 
+            text-align: center; 
+            margin-bottom: 30px; 
+        }
+        .status-bar span { 
+            background: var(--card-bg); 
+            padding: 8px 20px; 
+            border-radius: 30px; 
+            font-size: 0.85rem; 
+            font-weight: 600;
+            border: 1px solid var(--card-border);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        .status-bar span.ok { color: var(--color-ok); border-color: rgba(16,185,129,0.4); }
+        .status-bar span.err { color: var(--color-fail); border-color: rgba(239,68,68,0.4); }
 
-  /* PAGE */
-  .page { display: none; }
-  .page.active { display: block; }
+        /* Contadores Horizontais */
+        .counter {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 40px;
+        }
+        
+        .counter-item {
+            background: var(--card-bg);
+            padding: 15px 25px;
+            border-radius: 16px;
+            min-width: 140px;
+            text-align: center;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        .counter-item:hover {
+            transform: translateY(-3px);
+        }
 
-  /* SECTION TITLE */
-  .section-title { color: #3b82f6; font-size: 16px; font-weight: 600; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+        .counter-item .num { font-size: 2.2rem; font-weight: 700; line-height: 1; margin-bottom: 5px; }
+        .counter-item .lbl { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 600;}
+        
+        .num.green { color: var(--color-ok); text-shadow: 0 0 15px rgba(16,185,129,0.3); }
+        .num.red { color: var(--color-fail); text-shadow: 0 0 15px rgba(239,68,68,0.3); }
+        .num.gray { color: var(--color-off); }
 
-  /* STATS BAR */
-  .stats-bar { display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
-  .stat-card {
-    background: white; border-radius: 12px; padding: 16px 20px;
-    display: flex; align-items: center; gap: 14px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.08); flex: 1; min-width: 140px;
-  }
-  .stat-icon { font-size: 28px; }
-  .stat-info { display: flex; flex-direction: column; }
-  .stat-value { font-size: 22px; font-weight: 700; color: #1e293b; }
-  .stat-label { font-size: 12px; color: #64748b; }
+        /* Grid de Cards */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 20px;
+            width: 100%;
+        }
 
-  /* GRID */
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+        .card { 
+            background: var(--card-bg); 
+            border-radius: 16px; 
+            padding: 20px 15px; 
+            border: 1px solid var(--card-border);
+            border-top: 5px solid var(--card-border);
+            transition: all 0.3s ease; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            text-align: center; 
+            min-height: 140px; 
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.15);
+        }
+        
+        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3); }
 
-  /* TOWER CARD */
-  .tower-card {
-    background: white; border-radius: 14px;
-    padding: 16px; text-align: center;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-    border: 2px solid transparent;
-    transition: all 0.3s; cursor: pointer;
-    position: relative;
-  }
-  .tower-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
-  .tower-card.ok { border-color: #22c55e22; }
-  .tower-card.fail { border-color: #ef444422; }
-  .tower-card.waiting { border-color: #94a3b822; }
-  .tower-card.offline { border-color: #f9731622; }
+        .card.ok { border-top-color: var(--color-ok); background: linear-gradient(180deg, rgba(16,185,129,0.08) 0%, var(--card-bg) 40%); }
+        .card.fail { border-top-color: var(--color-fail); background: linear-gradient(180deg, rgba(239,68,68,0.08) 0%, var(--card-bg) 40%); }
+        .card.offline { border-top-color: var(--color-off); opacity: 0.8; }
 
-  .tower-name { font-size: 11px; font-weight: 600; color: #64748b; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
-  .tower-sub { font-size: 10px; color: #94a3b8; margin-bottom: 12px; }
+        .card-name { 
+            font-size: 0.85rem; 
+            font-weight: 700; 
+            margin-bottom: 15px; 
+            color: var(--text-main);
+            text-transform: uppercase; 
+            letter-spacing: 0.5px; 
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+            width: 100%; 
+        }
+        
+        .status-circle { 
+            width: 60px; 
+            height: 60px; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 0.7rem; 
+            font-weight: 700; 
+            color: #fff; 
+            margin-bottom: 15px; 
+            letter-spacing: 0.5px;
+        }
+        
+        .ok .status-circle { background: var(--color-ok); animation: pulse-green 2s infinite; }
+        .fail .status-circle { background: var(--color-fail); animation: pulse-red 1s infinite; }
+        .offline .status-circle { background: var(--color-off); }
 
-  .tower-circle {
-    width: 90px; height: 90px; border-radius: 50%;
-    margin: 0 auto 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 13px; font-weight: 700; color: white;
-    letter-spacing: 0.5px;
-  }
-  .circle-ok { background: radial-gradient(circle at 35% 35%, #4ade80, #16a34a); box-shadow: 0 4px 16px #22c55e44; }
-  .circle-fail { background: radial-gradient(circle at 35% 35%, #f87171, #dc2626); box-shadow: 0 4px 16px #ef444444; }
-  .circle-waiting { background: radial-gradient(circle at 35% 35%, #94a3b8, #64748b); }
-  .circle-offline { background: radial-gradient(circle at 35% 35%, #fb923c, #ea580c); box-shadow: 0 4px 16px #f9731644; }
+        @keyframes pulse-green { 0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,0.4)} 70%{box-shadow:0 0 0 10px rgba(16,185,129,0)} }
+        @keyframes pulse-red { 0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0.6)} 70%{box-shadow:0 0 0 15px rgba(239,68,68,0)} }
 
-  .tower-time { font-size: 11px; color: #94a3b8; display: flex; align-items: center; justify-content: center; gap: 4px; }
-  .tower-metric { font-size: 12px; color: #475569; margin-bottom: 4px; font-weight: 500; }
+        .card-footer { 
+            margin-top: auto; 
+            padding-top: 12px; 
+            border-top: 1px solid var(--card-border); 
+            font-size: 0.7rem; 
+            color: var(--text-muted); 
+            width: 100%; 
+            text-align: center; 
+            font-weight: 600;
+        }
+        
+        .empty { grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted); font-size: 1.1rem; }
+        
+        .loader { 
+            display: inline-block; 
+            width: 14px; 
+            height: 14px; 
+            border: 2px solid var(--card-border); 
+            border-top-color: #38bdf8; 
+            border-radius: 50%; 
+            animation: spin 0.8s linear infinite; 
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* HISTORY PAGE */
-  .filter-bar { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
-  .filter-bar select, .filter-bar input {
-    padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 8px;
-    font-size: 13px; color: #374151; background: white; outline: none;
-  }
-  .filter-bar select:focus, .filter-bar input:focus { border-color: #3b82f6; }
-  .btn-filter {
-    background: #3b82f6; color: white; border: none;
-    padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 13px;
-  }
-
-  .history-table { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
-  .history-table table { width: 100%; border-collapse: collapse; }
-  .history-table th {
-    background: #f8fafc; padding: 12px 16px;
-    text-align: left; font-size: 12px; font-weight: 600;
-    color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;
-    border-bottom: 1px solid #e2e8f0;
-  }
-  .history-table td { padding: 12px 16px; font-size: 13px; color: #374151; border-bottom: 1px solid #f1f5f9; }
-  .history-table tr:last-child td { border-bottom: none; }
-  .history-table tr:hover td { background: #f8fafc; }
-  .badge {
-    display: inline-flex; align-items: center; gap: 4px;
-    padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600;
-  }
-  .badge-ok { background: #dcfce7; color: #16a34a; }
-  .badge-fail { background: #fee2e2; color: #dc2626; }
-  .badge-offline { background: #ffedd5; color: #ea580c; }
-
-  /* OTA PAGE */
-  .ota-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-  @media(max-width:700px){ .ota-grid { grid-template-columns: 1fr; } }
-  .ota-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
-  .ota-card h3 { font-size: 14px; font-weight: 600; color: #1e293b; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
-  .ota-device-list { display: flex; flex-direction: column; gap: 8px; max-height: 300px; overflow-y: auto; }
-  .ota-device {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 10px 14px; border: 1px solid #e2e8f0; border-radius: 8px;
-    font-size: 13px;
-  }
-  .ota-device.selected { border-color: #3b82f6; background: #eff6ff; }
-  .ota-device-name { font-weight: 500; color: #1e293b; }
-  .ota-device-ip { font-size: 11px; color: #64748b; }
-  .ota-device-status { font-size: 11px; }
-  .ota-select-btn {
-    background: none; border: 1px solid #3b82f6; color: #3b82f6;
-    padding: 4px 10px; border-radius: 6px; cursor: pointer; font-size: 11px;
-  }
-  .ota-select-btn.selected-btn { background: #3b82f6; color: white; }
-
-  .upload-area {
-    border: 2px dashed #cbd5e1; border-radius: 10px;
-    padding: 30px; text-align: center; cursor: pointer;
-    transition: all 0.2s; margin-bottom: 16px;
-  }
-  .upload-area:hover, .upload-area.dragover { border-color: #3b82f6; background: #eff6ff; }
-  .upload-icon { font-size: 36px; margin-bottom: 8px; }
-  .upload-text { font-size: 13px; color: #64748b; }
-  .upload-text strong { color: #3b82f6; }
-  .upload-file-name { font-size: 12px; color: #22c55e; margin-top: 6px; font-weight: 500; }
-
-  .btn-ota {
-    width: 100%; padding: 12px; border-radius: 8px; border: none;
-    font-size: 14px; font-weight: 600; cursor: pointer;
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    transition: all 0.2s;
-  }
-  .btn-ota-send { background: #3b82f6; color: white; }
-  .btn-ota-send:hover { background: #2563eb; }
-  .btn-ota-send:disabled { background: #94a3b8; cursor: not-allowed; }
-
-  .ota-progress { margin-top: 16px; display: none; }
-  .ota-progress.show { display: block; }
-  .progress-bar-wrap { background: #e2e8f0; border-radius: 8px; height: 10px; overflow: hidden; margin: 8px 0; }
-  .progress-bar-fill { height: 100%; background: linear-gradient(90deg, #3b82f6, #06b6d4); border-radius: 8px; transition: width 0.3s; }
-  .progress-text { font-size: 12px; color: #64748b; text-align: center; }
-
-  .ota-log {
-    background: #0f172a; border-radius: 8px; padding: 14px;
-    font-family: monospace; font-size: 12px; color: #94a3b8;
-    height: 180px; overflow-y: auto; margin-top: 12px;
-  }
-  .log-line { margin-bottom: 4px; }
-  .log-ok { color: #4ade80; }
-  .log-err { color: #f87171; }
-  .log-info { color: #60a5fa; }
-
-  /* SUPABASE CONFIG */
-  .config-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); margin-bottom: 20px; }
-  .config-card h3 { font-size: 14px; font-weight: 600; color: #1e293b; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
-  .form-row { display: flex; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
-  .form-group { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 200px; }
-  .form-group label { font-size: 12px; font-weight: 500; color: #64748b; }
-  .form-group input {
-    padding: 9px 12px; border: 1px solid #e2e8f0; border-radius: 8px;
-    font-size: 13px; color: #374151; outline: none;
-  }
-  .form-group input:focus { border-color: #3b82f6; }
-  .btn-connect {
-    background: #1e3a8a; color: white; border: none;
-    padding: 10px 20px; border-radius: 8px; cursor: pointer;
-    font-size: 13px; font-weight: 600;
-  }
-  .btn-connect:hover { background: #1e40af; }
-
-  /* LOADING */
-  .loading { text-align: center; padding: 40px; color: #94a3b8; font-size: 14px; }
-  .spinner { display: inline-block; width: 24px; height: 24px; border: 3px solid #e2e8f0; border-top-color: #3b82f6; border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 8px; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* EMPTY */
-  .empty { text-align: center; padding: 60px 20px; color: #94a3b8; }
-  .empty-icon { font-size: 48px; margin-bottom: 12px; }
-
-  /* MODAL */
-  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; align-items: center; justify-content: center; }
-  .modal-overlay.show { display: flex; }
-  .modal { background: white; border-radius: 16px; padding: 24px; width: 90%; max-width: 480px; }
-  .modal h3 { font-size: 16px; font-weight: 700; color: #1e293b; margin-bottom: 16px; }
-  .modal-detail { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-  .modal-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
-  .modal-row:last-child { border-bottom: none; }
-  .modal-key { color: #64748b; }
-  .modal-val { font-weight: 500; color: #1e293b; }
-  .modal-close { background: #f1f5f9; border: none; padding: 8px 20px; border-radius: 8px; cursor: pointer; font-size: 13px; }
-</style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: var(--card-border); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--color-off); }
+    </style>
 </head>
 <body>
 
-<!-- SIDEBAR -->
-<div class="sidebar" id="sidebar">
-  <div class="sidebar-header">
-    <div class="logo-area">
-      <span class="logo-icon">📡</span>
-      <span class="logo-text">Monitoramento <span>Geral</span></span>
-    </div>
-    <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
-  </div>
-  <nav class="nav">
-    <div class="nav-item active" onclick="showPage('monitoring')">
-      <span class="nav-icon">🏠</span>
-      <span class="nav-label">Monitoramento</span>
-    </div>
-    <div class="nav-item" onclick="showPage('history')">
-      <span class="nav-icon">📊</span>
-      <span class="nav-label">Relatórios</span>
-    </div>
-    <div class="nav-item" onclick="showPage('ota')">
-      <span class="nav-icon">⬆️</span>
-      <span class="nav-label">Atualizações OTA</span>
-    </div>
-  </nav>
-  <div class="sidebar-footer">v7.1 · Supabase</div>
+<div class="logo-header">
+    <img src="logo_w-1.png" alt="Banner Trivia">
 </div>
 
-<!-- MAIN -->
-<div class="main">
-  <!-- TOPBAR -->
-  <div class="topbar">
-    <div class="topbar-left">
-      <span class="topbar-title">📡 Monitor de Torres</span>
-    </div>
-    <div class="topbar-right">
-      <div class="status-badge" id="conn-badge">
-        <div class="dot" style="background:#94a3b8;animation:none"></div>
-        <span id="conn-text">Desconectado</span>
-      </div>
-      <button class="btn-refresh" onclick="loadData()">🔄 Atualizar</button>
-    </div>
-  </div>
+<div class="container">
+    <h1>📡 Monitor Geral Trivia</h1>
 
-  <!-- CONTENT -->
-  <div class="content">
+    <div class="status-bar">
+        <span id="conn-status"><span class="loader"></span> Conectando...</span>
+    </div>
 
-    <!-- CONFIG CARD (sempre visível no topo) -->
-    <div class="config-card" id="config-card">
-      <h3>🔗 Conexão Supabase</h3>
-      <div class="form-row">
-        <div class="form-group">
-          <label>URL do Projeto</label>
-          <input type="text" id="sb-url" placeholder="https://xxxx.supabase.co" />
+    <div class="counter">
+        <div class="counter-item">
+            <div class="num green" id="cnt-ok">-</div>
+            <div class="lbl">Operacionais</div>
         </div>
-        <div class="form-group">
-          <label>Anon Key</label>
-          <input type="password" id="sb-key" placeholder="eyJhbGci..." />
+        <div class="counter-item">
+            <div class="num red" id="cnt-fail">-</div>
+            <div class="lbl">Falhas</div>
         </div>
-      </div>
-      <button class="btn-connect" onclick="conectar()">🔌 Conectar</button>
-    </div>
-
-    <!-- PAGE: MONITORING -->
-    <div class="page active" id="page-monitoring">
-      <div class="section-title">🏠 Monitoramento Geral</div>
-
-      <div class="stats-bar" id="stats-bar">
-        <div class="stat-card"><span class="stat-icon">📡</span><div class="stat-info"><span class="stat-value" id="stat-total">--</span><span class="stat-label">Total de Torres</span></div></div>
-        <div class="stat-card"><span class="stat-icon">✅</span><div class="stat-info"><span class="stat-value" id="stat-ok" style="color:#16a34a">--</span><span class="stat-label">Operacionais</span></div></div>
-        <div class="stat-card"><span class="stat-icon">❌</span><div class="stat-info"><span class="stat-value" id="stat-fail" style="color:#dc2626">--</span><span class="stat-label">Em Falha</span></div></div>
-        <div class="stat-card"><span class="stat-icon">⏱️</span><div class="stat-info"><span class="stat-value" id="stat-offline" style="color:#ea580c">--</span><span class="stat-label">Sem Resposta</span></div></div>
-      </div>
-
-      <div id="grid-container">
-        <div class="empty"><div class="empty-icon">📡</div><div>Conecte ao Supabase para ver as torres</div></div>
-      </div>
-    </div>
-
-    <!-- PAGE: HISTORY -->
-    <div class="page" id="page-history">
-      <div class="section-title">📊 Histórico de Eventos</div>
-      <div class="filter-bar">
-        <select id="filter-torre"><option value="">Todas as Torres</option></select>
-        <select id="filter-status">
-          <option value="">Todos os Status</option>
-          <option value="true">OK</option>
-          <option value="false">FALHA</option>
-        </select>
-        <input type="date" id="filter-date" />
-        <button class="btn-filter" onclick="loadHistory()">🔍 Filtrar</button>
-      </div>
-      <div class="history-table" id="history-container">
-        <div class="empty"><div class="empty-icon">📋</div><div>Conecte ao Supabase para ver o histórico</div></div>
-      </div>
-    </div>
-
-    <!-- PAGE: OTA -->
-    <div class="page" id="page-ota">
-      <div class="section-title">⬆️ Atualização OTA</div>
-      <div style="background:#fef3c7;border:1px solid #f59e0b;border-radius:10px;padding:12px 16px;margin-bottom:20px;font-size:13px;color:#92400e;">
-        ⚠️ <strong>Atenção:</strong> A atualização OTA envia o firmware diretamente para o ESP32 via rede. Certifique-se que o dispositivo está online e na mesma rede.
-      </div>
-      <div class="ota-grid">
-        <!-- DEVICE LIST -->
-        <div class="ota-card">
-          <h3>📡 Dispositivos Online</h3>
-          <div class="ota-device-list" id="ota-device-list">
-            <div class="empty" style="padding:20px"><div class="empty-icon" style="font-size:28px">📡</div><div>Conecte ao Supabase</div></div>
-          </div>
+        <div class="counter-item">
+            <div class="num gray" id="cnt-off">-</div>
+            <div class="lbl">Sem Resposta</div>
         </div>
-
-        <!-- UPLOAD -->
-        <div class="ota-card">
-          <h3>📦 Enviar Firmware</h3>
-          <div class="upload-area" id="upload-area" onclick="document.getElementById('fw-file').click()"
-            ondragover="event.preventDefault();this.classList.add('dragover')"
-            ondragleave="this.classList.remove('dragover')"
-            ondrop="handleDrop(event)">
-            <div class="upload-icon">📁</div>
-            <div class="upload-text">Clique ou arraste o arquivo <strong>.bin</strong></div>
-            <div class="upload-file-name" id="fw-name"></div>
-          </div>
-          <input type="file" id="fw-file" accept=".bin" style="display:none" onchange="handleFile(this)">
-
-          <div id="selected-device-info" style="background:#f8fafc;border-radius:8px;padding:10px 14px;font-size:13px;color:#64748b;margin-bottom:12px;">
-            Nenhum dispositivo selecionado
-          </div>
-
-          <button class="btn-ota btn-ota-send" id="btn-send-ota" onclick="sendOTA()" disabled>
-            ⬆️ Enviar Atualização
-          </button>
-
-          <div class="ota-progress" id="ota-progress">
-            <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-fill" style="width:0%"></div></div>
-            <div class="progress-text" id="progress-text">Aguardando...</div>
-          </div>
-
-          <div class="ota-log" id="ota-log">
-            <div class="log-line log-info">[Sistema] Aguardando seleção de dispositivo e firmware...</div>
-          </div>
-        </div>
-      </div>
     </div>
 
-  </div>
-</div>
-
-<!-- MODAL DETALHES -->
-<div class="modal-overlay" id="modal">
-  <div class="modal">
-    <h3 id="modal-title">Detalhes da Torre</h3>
-    <div class="modal-detail" id="modal-body"></div>
-    <button class="modal-close" onclick="closeModal()">Fechar</button>
-  </div>
+    <div id="grid" class="grid">
+        <div class="empty"><span class="loader"></span> Carregando torres...</div>
+    </div>
 </div>
 
 <script>
-let SB_URL = '';
-let SB_KEY = '';
-let connected = false;
-let towers = [];
-let selectedDevice = null;
-let selectedFile = null;
-const OFFLINE_MINUTES = 5;
+    const SB_URL = "https://fkddaibgfclnpjedeisw.supabase.co";
+    const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZrZGRhaWJnZmNsbnBqZWRlaXN3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4NTA4NTEsImV4cCI6MjA5MzQyNjg1MX0.obf-xuFCd6NTXkMtsXniEt2-RsvKkgIrtkwqo7WJgpw";
 
-// ============================================================
-// SIDEBAR
-// ============================================================
-function toggleSidebar() {
-  document.getElementById('sidebar').classList.toggle('collapsed');
-}
-
-function showPage(page) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('page-' + page).classList.add('active');
-  event.currentTarget.classList.add('active');
-
-  if (page === 'history' && connected) loadHistory();
-  if (page === 'ota' && connected) loadOTADevices();
-}
-
-// ============================================================
-// CONEXÃO
-// ============================================================
-function conectar() {
-  SB_URL = document.getElementById('sb-url').value.trim().replace(/\/$/, '');
-  SB_KEY = document.getElementById('sb-key').value.trim();
-
-  if (!SB_URL || !SB_KEY) {
-    alert('Preencha a URL e a Anon Key do Supabase.');
-    return;
-  }
-
-  connected = true;
-  document.getElementById('conn-badge').innerHTML = '<div class="dot"></div><span id="conn-text">Conectado</span>';
-  document.getElementById('config-card').style.display = 'none';
-  loadData();
-  setInterval(loadData, 60000);
-}
-
-// ============================================================
-// SUPABASE FETCH
-// ============================================================
-async function sbFetch(path, params = '') {
-  const url = `${SB_URL}/rest/v1/${path}${params}`;
-  const res = await fetch(url, {
-    headers: {
-      'apikey': SB_KEY,
-      'Authorization': 'Bearer ' + SB_KEY,
-      'Content-Type': 'application/json'
-    }
-  });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  return res.json();
-}
-
-// ============================================================
-// MONITORING
-// ============================================================
-async function loadData() {
-  if (!connected) return;
-  const container = document.getElementById('grid-container');
-  container.innerHTML = '<div class="loading"><div class="spinner"></div><br>Carregando torres...</div>';
-
-  try {
-    const data = await sbFetch('device_status', '?select=*&order=device_name.asc');
-    towers = data;
-    renderGrid(data);
-    updateStats(data);
-    updateFilterOptions(data);
-  } catch (e) {
-    container.innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><div>Erro ao carregar: ${e.message}</div></div>`;
-  }
-}
-
-function getStatus(tower) {
-  if (!tower.is_online) return 'fail';
-  const last = new Date(tower.last_seen);
-  const diff = (Date.now() - last.getTime()) / 60000;
-  if (diff > OFFLINE_MINUTES) return 'offline';
-  return 'ok';
-}
-
-function getStatusLabel(status) {
-  if (status === 'ok') return 'OPERACIONAL';
-  if (status === 'fail') return 'FALHA';
-  if (status === 'offline') return 'SEM RESPOSTA';
-  return 'AGUARDANDO';
-}
-
-function getCircleClass(status) {
-  if (status === 'ok') return 'circle-ok';
-  if (status === 'fail') return 'circle-fail';
-  if (status === 'offline') return 'circle-offline';
-  return 'circle-waiting';
-}
-
-function formatTime(iso) {
-  if (!iso) return '---';
-  const d = new Date(iso);
-  return d.toLocaleString('pt-BR', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' });
-}
-
-function timeSince(iso) {
-  if (!iso) return '---';
-  const diff = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
-  if (diff < 60) return `${diff}s atrás`;
-  if (diff < 3600) return `${Math.floor(diff/60)}min atrás`;
-  return `${Math.floor(diff/3600)}h atrás`;
-}
-
-function renderGrid(data) {
-  const container = document.getElementById('grid-container');
-  if (!data.length) {
-    container.innerHTML = '<div class="empty"><div class="empty-icon">📡</div><div>Nenhuma torre cadastrada</div></div>';
-    return;
-  }
-
-  container.innerHTML = '<div class="grid" id="tower-grid"></div>';
-  const grid = document.getElementById('tower-grid');
-
-  data.forEach(tower => {
-    const status = getStatus(tower);
-    const label = getStatusLabel(status);
-    const circleClass = getCircleClass(status);
-
-    const card = document.createElement('div');
-    card.className = `tower-card ${status}`;
-    card.onclick = () => showModal(tower);
-    card.innerHTML = `
-      <div class="tower-name">${tower.device_name}</div>
-      <div class="tower-sub">${timeSince(tower.last_seen)}</div>
-      <div class="tower-circle ${circleClass}">${label}</div>
-      <div class="tower-time">🕐 ${formatTime(tower.last_seen)}</div>
-    `;
-    grid.appendChild(card);
-  });
-}
-
-function updateStats(data) {
-  const ok = data.filter(t => getStatus(t) === 'ok').length;
-  const fail = data.filter(t => getStatus(t) === 'fail').length;
-  const offline = data.filter(t => getStatus(t) === 'offline').length;
-  document.getElementById('stat-total').textContent = data.length;
-  document.getElementById('stat-ok').textContent = ok;
-  document.getElementById('stat-fail').textContent = fail;
-  document.getElementById('stat-offline').textContent = offline;
-}
-
-// ============================================================
-// HISTORY
-// ============================================================
-function updateFilterOptions(data) {
-  const sel = document.getElementById('filter-torre');
-  sel.innerHTML = '<option value="">Todas as Torres</option>';
-  data.forEach(t => {
-    const opt = document.createElement('option');
-    opt.value = t.device_name;
-    opt.textContent = t.device_name;
-    sel.appendChild(opt);
-  });
-}
-
-async function loadHistory() {
-  if (!connected) return;
-  const container = document.getElementById('history-container');
-  container.innerHTML = '<div class="loading"><div class="spinner"></div><br>Carregando histórico...</div>';
-
-  const torre = document.getElementById('filter-torre').value;
-  const status = document.getElementById('filter-status').value;
-  const date = document.getElementById('filter-date').value;
-
-  let params = '?select=*&order=created_at.desc&limit=200';
-  if (torre) params += `&device_name=eq.${encodeURIComponent(torre)}`;
-  if (status !== '') params += `&is_ok=eq.${status}`;
-  if (date) params += `&created_at=gte.${date}T00:00:00&created_at=lte.${date}T23:59:59`;
-
-  try {
-    const data = await sbFetch('status_history', params);
-    renderHistory(data);
-  } catch (e) {
-    container.innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><div>Erro: ${e.message}</div></div>`;
-  }
-}
-
-function renderHistory(data) {
-  const container = document.getElementById('history-container');
-  if (!data.length) {
-    container.innerHTML = '<div class="empty"><div class="empty-icon">📋</div><div>Nenhum evento encontrado</div></div>';
-    return;
-  }
-
-  let html = `<table>
-    <thead><tr>
-      <th>Torre</th>
-      <th>Status</th>
-      <th>Data/Hora</th>
-      <th>Duração</th>
-    </tr></thead><tbody>`;
-
-  data.forEach((row, i) => {
-    const statusClass = row.is_ok ? 'badge-ok' : 'badge-fail';
-    const statusLabel = row.is_ok ? '✅ OK' : '❌ FALHA';
-    const dt = new Date(row.created_at);
-    const dtStr = dt.toLocaleString('pt-BR');
-
-    // Calcula duração até próximo evento
-    let duracao = '---';
-    if (i < data.length - 1) {
-      const next = new Date(data[i+1].created_at);
-      const diff = Math.floor((dt - next) / 1000);
-      if (diff < 3600) duracao = `${Math.floor(diff/60)}min`;
-      else duracao = `${Math.floor(diff/3600)}h ${Math.floor((diff%3600)/60)}min`;
+    async function fetchData() {
+        try {
+            const res = await fetch(`${SB_URL}/rest/v1/device_status?select=*&order=device_name`, {
+                headers: { "apikey": SB_KEY, "Authorization": `Bearer ${SB_KEY}` }
+            });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const data = await res.json();
+            renderCards(data);
+            
+            const connStatus = document.getElementById('conn-status');
+            connStatus.className = 'ok';
+            connStatus.innerHTML = '🟢 Conectado ao Supabase';
+        } catch (err) {
+            const connStatus = document.getElementById('conn-status');
+            connStatus.className = 'err';
+            connStatus.innerHTML = `🔴 Erro: ${err.message}`;
+        }
     }
 
-    html += `<tr>
-      <td><strong>${row.device_name}</strong></td>
-      <td><span class="badge ${statusClass}">${statusLabel}</span></td>
-      <td>${dtStr}</td>
-      <td>${duracao}</td>
-    </tr>`;
-  });
+    function renderCards(data) {
+        const grid = document.getElementById('grid');
+        let cntOk = 0, cntFail = 0, cntOff = 0;
+        
+        if (!data || data.length === 0) {
+            grid.innerHTML = '<div class="empty">Nenhuma torre encontrada no banco de dados.</div>';
+            return;
+        }
+        
+        grid.innerHTML = '';
+        data.forEach(t => {
+            const now = new Date();
+            const last = new Date(t.last_seen.replace(" ", "T").split("+")[0] + "Z");
+            const dataFormatada = last.toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+            const diffMin = isNaN(last) ? 9999 : Math.floor((now - last) / 60000);
+            
+            let cls = 'fail', label = 'FALHA';
+            if (diffMin > 15)  { cls = 'offline'; label = 'OFFLINE'; cntOff++; }
+            else if (t.is_ok)  { cls = 'ok';      label = 'OK';      cntOk++;  }
+            else               {                                     cntFail++; }
 
-  html += '</tbody></table>';
-  container.innerHTML = html;
-}
+            const card = document.createElement('div');
+            card.className = `card ${cls}`;
+            card.innerHTML = `
+                <div class="card-name" title="${t.device_name}">${t.device_name}</div>
+                <div class="status-circle">${label}</div>
+                <div class="card-footer">🕐 ${dataFormatada.split(',')[1] || '--:--'}</div>`;
+            grid.appendChild(card);
+        });
+        
+        document.getElementById('cnt-ok').textContent   = cntOk;
+        document.getElementById('cnt-fail').textContent = cntFail;
+        document.getElementById('cnt-off').textContent  = cntOff;
+    }
 
-// ============================================================
-// OTA
-// ============================================================
-function loadOTADevices() {
-  const list = document.getElementById('ota-device-list');
-  if (!towers.length) {
-    list.innerHTML = '<div class="empty" style="padding:20px"><div class="empty-icon" style="font-size:28px">📡</div><div>Nenhuma torre encontrada</div></div>';
-    return;
-  }
-
-  list.innerHTML = '';
-  towers.forEach(tower => {
-    const status = getStatus(tower);
-    const isOnline = status === 'ok';
-    const div = document.createElement('div');
-    div.className = `ota-device${selectedDevice === tower.device_name ? ' selected' : ''}`;
-    div.innerHTML = `
-      <div>
-        <div class="ota-device-name">${tower.device_name}</div>
-        <div class="ota-device-ip">Último: ${timeSince(tower.last_seen)}</div>
-      </div>
-      <div style="display:flex;align-items:center;gap:8px">
-        <span class="ota-device-status">${isOnline ? '🟢' : '🔴'}</span>
-        <button class="ota-select-btn${selectedDevice === tower.device_name ? ' selected-btn' : ''}"
-          onclick="selectDevice('${tower.device_name}', ${isOnline})" ${!isOnline ? 'disabled style="opacity:0.4"' : ''}>
-          ${selectedDevice === tower.device_name ? '✓ Selecionado' : 'Selecionar'}
-        </button>
-      </div>
-    `;
-    list.appendChild(div);
-  });
-}
-
-function selectDevice(name, isOnline) {
-  if (!isOnline) return;
-  selectedDevice = name;
-  document.getElementById('selected-device-info').innerHTML = `
-    <strong>Dispositivo:</strong> ${name}<br>
-    <span style="color:#22c55e;font-size:11px">🟢 Online - pronto para receber atualização</span>
-  `;
-  checkOTAReady();
-  loadOTADevices();
-  addLog(`[OTA] Dispositivo selecionado: ${name}`, 'info');
-}
-
-function handleFile(input) {
-  if (input.files[0]) {
-    selectedFile = input.files[0];
-    document.getElementById('fw-name').textContent = `✅ ${selectedFile.name} (${(selectedFile.size/1024).toFixed(1)} KB)`;
-    checkOTAReady();
-    addLog(`[OTA] Firmware carregado: ${selectedFile.name} (${(selectedFile.size/1024).toFixed(1)} KB)`, 'info');
-  }
-}
-
-function handleDrop(e) {
-  e.preventDefault();
-  document.getElementById('upload-area').classList.remove('dragover');
-  const file = e.dataTransfer.files[0];
-  if (file && file.name.endsWith('.bin')) {
-    selectedFile = file;
-    document.getElementById('fw-name').textContent = `✅ ${file.name} (${(file.size/1024).toFixed(1)} KB)`;
-    checkOTAReady();
-    addLog(`[OTA] Firmware carregado: ${file.name}`, 'info');
-  }
-}
-
-function checkOTAReady() {
-  const btn = document.getElementById('btn-send-ota');
-  btn.disabled = !(selectedDevice && selectedFile);
-}
-
-function addLog(msg, type = '') {
-  const log = document.getElementById('ota-log');
-  const line = document.createElement('div');
-  line.className = `log-line ${type ? 'log-' + type : ''}`;
-  const now = new Date().toLocaleTimeString('pt-BR');
-  line.textContent = `[${now}] ${msg}`;
-  log.appendChild(line);
-  log.scrollTop = log.scrollHeight;
-}
-
-async function sendOTA() {
-  if (!selectedDevice || !selectedFile) return;
-
-  addLog(`[OTA] Iniciando envio para ${selectedDevice}...`, 'info');
-  addLog(`[OTA] Arquivo: ${selectedFile.name} (${(selectedFile.size/1024).toFixed(1)} KB)`, 'info');
-
-  const progress = document.getElementById('ota-progress');
-  const fill = document.getElementById('progress-fill');
-  const text = document.getElementById('progress-text');
-  progress.classList.add('show');
-
-  // Simulação de progresso (OTA real depende do IP do ESP32)
-  addLog('[OTA] ⚠️ Para OTA real, o ESP32 deve estar na mesma rede e com ArduinoOTA ativo.', 'err');
-  addLog('[OTA] Simulando envio...', 'info');
-
-  for (let i = 0; i <= 100; i += 5) {
-    await new Promise(r => setTimeout(r, 120));
-    fill.style.width = i + '%';
-    text.textContent = `Enviando... ${i}%`;
-    if (i === 50) addLog('[OTA] 50% concluído...', 'info');
-  }
-
-  text.textContent = 'Concluído!';
-  addLog(`[OTA] ✅ Simulação concluída! Para OTA real, use o IP do ESP32 diretamente.`, 'ok');
-  addLog(`[OTA] Dica: acesse http://<IP_DO_ESP32>/update no navegador para upload manual.`, 'info');
-}
-
-// ============================================================
-// MODAL
-// ============================================================
-function showModal(tower) {
-  const status = getStatus(tower);
-  document.getElementById('modal-title').textContent = `📡 ${tower.device_name}`;
-  document.getElementById('modal-body').innerHTML = `
-    <div class="modal-row"><span class="modal-key">Status</span><span class="modal-val">${getStatusLabel(status)}</span></div>
-    <div class="modal-row"><span class="modal-key">Último contato</span><span class="modal-val">${formatTime(tower.last_seen)}</span></div>
-    <div class="modal-row"><span class="modal-key">Tempo desde contato</span><span class="modal-val">${timeSince(tower.last_seen)}</span></div>
-    <div class="modal-row"><span class="modal-key">Online</span><span class="modal-val">${tower.is_online ? '✅ Sim' : '❌ Não'}</span></div>
-    <div class="modal-row"><span class="modal-key">Cadastrado em</span><span class="modal-val">${formatTime(tower.created_at)}</span></div>
-  `;
-  document.getElementById('modal').classList.add('show');
-}
-
-function closeModal() {
-  document.getElementById('modal').classList.remove('show');
-}
-document.getElementById('modal').addEventListener('click', function(e) {
-  if (e.target === this) closeModal();
-});
+    fetchData();
+    setInterval(fetchData, 10000);
 </script>
 </body>
 </html>
