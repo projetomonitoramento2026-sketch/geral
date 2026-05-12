@@ -105,8 +105,8 @@
     border-radius: 14px; padding: 14px 18px; min-width: 110px; flex: 1;
     display: flex; flex-direction: column; gap: 4px;
   }
-  .stat-num { font-size: 2rem; font-weight: 700; line-height: 1; }
-  .stat-lbl { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+  .stat-num { font-size: 1.8rem; font-weight: 700; line-height: 1; }
+  .stat-lbl { font-size: 0.68rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; font-weight: 600; }
   .stat-num.green { color: var(--ok); }
   .stat-num.red { color: var(--fail); }
   .stat-num.gray { color: var(--off); }
@@ -114,13 +114,13 @@
 
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 14px;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
   }
   .card {
     background: var(--card); border: 1px solid var(--border);
-    border-top: 4px solid var(--border);
-    border-radius: 14px; padding: 16px 12px;
+    border-top: 3px solid var(--border);
+    border-radius: 12px; padding: 13px 10px;
     display: flex; flex-direction: column; align-items: center;
     text-align: center; cursor: pointer;
     transition: all 0.25s;
@@ -129,32 +129,32 @@
   .card.ok { border-top-color: var(--ok); background: linear-gradient(160deg, rgba(16,185,129,0.07) 0%, var(--card) 50%); }
   .card.fail { border-top-color: var(--fail); background: linear-gradient(160deg, rgba(239,68,68,0.07) 0%, var(--card) 50%); }
   .card.offline { border-top-color: var(--off); opacity: 0.75; }
-  .card-name { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .card-name { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 10px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .status-circle {
-    width: 56px; height: 56px; border-radius: 50%;
+    width: 50px; height: 50px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    font-size: 0.62rem; font-weight: 700; color: #fff;
-    margin-bottom: 12px; letter-spacing: 0.5px;
+    font-size: 0.58rem; font-weight: 700; color: #fff;
+    margin-bottom: 10px; letter-spacing: 0.4px;
   }
   .ok .status-circle { background: var(--ok); animation: pg 2s infinite; }
   .fail .status-circle { background: var(--fail); animation: pr 1s infinite; }
   .offline .status-circle { background: var(--off); }
   @keyframes pg { 0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,0.4)} 70%{box-shadow:0 0 0 10px rgba(16,185,129,0)} }
   @keyframes pr { 0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0.5)} 70%{box-shadow:0 0 0 12px rgba(239,68,68,0)} }
-  .card-footer { margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border); font-size: 0.66rem; color: var(--muted); width: 100%; font-weight: 600; }
+  .card-footer { margin-top: auto; padding-top: 8px; border-top: 1px solid var(--border); font-size: 0.62rem; color: var(--muted); width: 100%; font-weight: 600; }
 
   /* ── CARD DUPLO ── */
-  .dual-circles { display: flex; gap: 10px; align-items: center; justify-content: center; margin-bottom: 12px; }
+  .dual-circles { display: flex; gap: 8px; align-items: center; justify-content: center; margin-bottom: 10px; }
   .dual-circle {
-    width: 44px; height: 44px; border-radius: 50%;
+    width: 40px; height: 40px; border-radius: 50%;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    font-size: 0.52rem; font-weight: 700; color: #fff; letter-spacing: 0.3px; gap: 1px;
+    font-size: 0.48rem; font-weight: 700; color: #fff; letter-spacing: 0.3px; gap: 1px;
   }
-  .dual-circle .dc-num { font-size: 0.62rem; font-weight: 800; line-height: 1; }
+  .dual-circle .dc-num { font-size: 0.58rem; font-weight: 800; line-height: 1; }
   .dual-circle.ok  { background: var(--ok);  animation: pg 2s infinite; }
   .dual-circle.fail{ background: var(--fail); animation: pr 1s infinite; }
   .dual-circle.offline { background: var(--off); }
-  .dual-footer { margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border); font-size: 0.6rem; color: var(--muted); width: 100%; display: flex; justify-content: space-around; font-weight: 600; }
+  .dual-footer { margin-top: auto; padding-top: 8px; border-top: 1px solid var(--border); font-size: 0.56rem; color: var(--muted); width: 100%; display: flex; justify-content: space-around; font-weight: 600; }
 
   /* ── PAGE: HISTÓRICO ── */
   .hist-filters { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
@@ -303,21 +303,46 @@
     .btn-menu { display: block; }
 
     /* Topbar compacta */
-    .topbar { padding: 10px 14px; }
-    .topbar h1 { font-size: 0.95rem; }
+    .topbar { padding: 8px 12px; }
+    .topbar h1 { font-size: 0.88rem; }
     .badge { display: none; }
+    .btn-refresh { padding: 5px 10px; font-size: 0.72rem; }
 
     /* Conteúdo com padding bottom para bottom nav */
-    .content { padding: 14px 12px; padding-bottom: calc(var(--navbar-h) + 14px); }
+    .content { padding: 10px 10px; padding-bottom: calc(var(--navbar-h) + 10px); }
+
+    /* Tabela mais compacta */
+    .hist-table { font-size: 0.72rem; }
+    .hist-table th { padding: 8px 10px; font-size: 0.62rem; }
+    .hist-table td { padding: 8px 10px; }
+    .pill { font-size: 0.62rem; padding: 2px 7px; }
+
+    /* OTA compacto */
+    .ota-card { padding: 14px; }
+    .ota-card h3 { font-size: 0.8rem; margin-bottom: 12px; }
+    .device-row .dname { font-size: 0.75rem; }
+    .device-row .dstatus { font-size: 0.62rem; }
+    .ota-info { font-size: 0.72rem; padding: 10px; }
+    .ota-log { font-size: 0.68rem; height: 120px; }
 
     /* Stats menores */
-    .stats-row { gap: 8px; margin-bottom: 14px; }
-    .stat-card { padding: 12px 14px; min-width: 80px; }
-    .stat-num { font-size: 1.6rem; }
-    .stat-lbl { font-size: 0.65rem; }
+    .stats-row { gap: 6px; margin-bottom: 10px; }
+    .stat-card { padding: 8px 10px; min-width: 0; border-radius: 10px; }
+    .stat-num { font-size: 1.35rem; }
+    .stat-lbl { font-size: 0.58rem; letter-spacing: 0.5px; }
 
     /* Grid 2 colunas no mobile */
-    .grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+
+    /* Cards menores no mobile */
+    .card { padding: 10px 8px; border-radius: 10px; }
+    .card-name { font-size: 0.62rem; margin-bottom: 8px; }
+    .status-circle { width: 42px; height: 42px; font-size: 0.52rem; margin-bottom: 8px; }
+    .card-footer { font-size: 0.56rem; padding-top: 6px; }
+    .dual-circle { width: 36px; height: 36px; font-size: 0.44rem; }
+    .dual-circle .dc-num { font-size: 0.52rem; }
+    .dual-footer { font-size: 0.5rem; padding-top: 6px; }
+    .dual-circles { gap: 6px; margin-bottom: 8px; }
 
     /* OTA em coluna única */
     .ota-grid { grid-template-columns: 1fr; }
@@ -333,11 +358,17 @@
   }
 
   @media (max-width: 400px) {
-    .grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-    .card { padding: 12px 8px; }
-    .card-name { font-size: 0.68rem; }
-    .dual-circle { width: 38px; height: 38px; }
-    .status-circle { width: 48px; height: 48px; }
+    .content { padding: 10px 8px; padding-bottom: calc(var(--navbar-h) + 10px); }
+    .grid { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+    .card { padding: 8px 6px; border-radius: 9px; }
+    .card-name { font-size: 0.56rem; margin-bottom: 6px; }
+    .status-circle { width: 36px; height: 36px; font-size: 0.48rem; margin-bottom: 6px; }
+    .dual-circle { width: 32px; height: 32px; font-size: 0.42rem; }
+    .dual-circle .dc-num { font-size: 0.48rem; }
+    .stat-num { font-size: 1.2rem; }
+    .stat-lbl { font-size: 0.54rem; }
+    .stat-card { padding: 7px 8px; }
+    .topbar h1 { font-size: 0.82rem; }
   }
 </style>
 </head>
