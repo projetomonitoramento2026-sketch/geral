@@ -18,17 +18,20 @@
     --fail: #ef4444;
     --off: #64748b;
     --accent: #38bdf8;
+    --navbar-h: 56px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); display: flex; height: 100vh; overflow: hidden; }
 
-  /* ── SIDEBAR ── */
+  /* ── SIDEBAR (desktop) ── */
   .sidebar {
     width: 220px; min-width: 220px;
     background: var(--sidebar);
     border-right: 1px solid var(--border);
     display: flex; flex-direction: column;
     padding: 0;
+    transition: transform 0.3s;
+    z-index: 200;
   }
   .sidebar-logo {
     padding: 18px 16px 14px;
@@ -58,17 +61,20 @@
   .conn-dot.err { background: var(--fail); }
 
   /* ── MAIN ── */
-  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
   .topbar {
     padding: 14px 24px;
     border-bottom: 1px solid var(--border);
     display: flex; align-items: center; justify-content: space-between;
     background: var(--sidebar);
+    gap: 10px;
+    flex-wrap: wrap;
   }
+  .topbar-left { display: flex; align-items: center; gap: 10px; }
   .topbar h1 { font-size: 1.1rem; font-weight: 700; }
-  .topbar-right { display: flex; align-items: center; gap: 12px; }
+  .topbar-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
   .badge {
-    padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600;
+    padding: 4px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 600;
     background: var(--card2); border: 1px solid var(--border);
   }
   .badge.ok { color: var(--ok); border-color: rgba(16,185,129,0.3); }
@@ -78,16 +84,25 @@
     background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.3);
     color: var(--accent); padding: 6px 14px; border-radius: 8px;
     font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s;
+    white-space: nowrap;
   }
   .btn-refresh:hover { background: rgba(56,189,248,0.2); }
 
-  .content { flex: 1; overflow-y: auto; padding: 24px; }
+  /* Hamburger */
+  .btn-menu {
+    display: none;
+    background: none; border: none; color: var(--text);
+    font-size: 1.4rem; cursor: pointer; padding: 4px 6px;
+    line-height: 1;
+  }
+
+  .content { flex: 1; overflow-y: auto; padding: 20px; }
 
   /* ── PAGE: MONITORAMENTO ── */
-  .stats-row { display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+  .stats-row { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
   .stat-card {
     background: var(--card); border: 1px solid var(--border);
-    border-radius: 14px; padding: 16px 22px; min-width: 130px; flex: 1;
+    border-radius: 14px; padding: 14px 18px; min-width: 110px; flex: 1;
     display: flex; flex-direction: column; gap: 4px;
   }
   .stat-num { font-size: 2rem; font-weight: 700; line-height: 1; }
@@ -99,69 +114,69 @@
 
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 14px;
   }
   .card {
     background: var(--card); border: 1px solid var(--border);
     border-top: 4px solid var(--border);
-    border-radius: 14px; padding: 18px 14px;
+    border-radius: 14px; padding: 16px 12px;
     display: flex; flex-direction: column; align-items: center;
     text-align: center; cursor: pointer;
     transition: all 0.25s;
   }
-  .card:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+  .card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
   .card.ok { border-top-color: var(--ok); background: linear-gradient(160deg, rgba(16,185,129,0.07) 0%, var(--card) 50%); }
   .card.fail { border-top-color: var(--fail); background: linear-gradient(160deg, rgba(239,68,68,0.07) 0%, var(--card) 50%); }
   .card.offline { border-top-color: var(--off); opacity: 0.75; }
-  .card-name { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 14px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .card-name { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .status-circle {
-    width: 58px; height: 58px; border-radius: 50%;
+    width: 56px; height: 56px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    font-size: 0.65rem; font-weight: 700; color: #fff;
-    margin-bottom: 14px; letter-spacing: 0.5px;
+    font-size: 0.62rem; font-weight: 700; color: #fff;
+    margin-bottom: 12px; letter-spacing: 0.5px;
   }
   .ok .status-circle { background: var(--ok); animation: pg 2s infinite; }
   .fail .status-circle { background: var(--fail); animation: pr 1s infinite; }
   .offline .status-circle { background: var(--off); }
   @keyframes pg { 0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,0.4)} 70%{box-shadow:0 0 0 10px rgba(16,185,129,0)} }
   @keyframes pr { 0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0.5)} 70%{box-shadow:0 0 0 12px rgba(239,68,68,0)} }
-  .card-footer { margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border); font-size: 0.68rem; color: var(--muted); width: 100%; font-weight: 600; }
+  .card-footer { margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border); font-size: 0.66rem; color: var(--muted); width: 100%; font-weight: 600; }
 
-  /* ── CARD DUPLO (par com traço) ── */
-  .dual-circles {
-    display: flex; gap: 10px; align-items: center; justify-content: center;
-    margin-bottom: 14px;
-  }
+  /* ── CARD DUPLO ── */
+  .dual-circles { display: flex; gap: 10px; align-items: center; justify-content: center; margin-bottom: 12px; }
   .dual-circle {
-    width: 46px; height: 46px; border-radius: 50%;
+    width: 44px; height: 44px; border-radius: 50%;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    font-size: 0.55rem; font-weight: 700; color: #fff; letter-spacing: 0.3px;
-    gap: 1px;
+    font-size: 0.52rem; font-weight: 700; color: #fff; letter-spacing: 0.3px; gap: 1px;
   }
-  .dual-circle .dc-num { font-size: 0.65rem; font-weight: 800; line-height: 1; }
+  .dual-circle .dc-num { font-size: 0.62rem; font-weight: 800; line-height: 1; }
   .dual-circle.ok  { background: var(--ok);  animation: pg 2s infinite; }
   .dual-circle.fail{ background: var(--fail); animation: pr 1s infinite; }
   .dual-circle.offline { background: var(--off); }
-  .dual-footer { margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border); font-size: 0.62rem; color: var(--muted); width: 100%; display: flex; justify-content: space-around; font-weight: 600; }
+  .dual-footer { margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border); font-size: 0.6rem; color: var(--muted); width: 100%; display: flex; justify-content: space-around; font-weight: 600; }
 
   /* ── PAGE: HISTÓRICO ── */
-  .hist-filters { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+  .hist-filters { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
   .hist-filters select, .hist-filters input {
     background: var(--card); border: 1px solid var(--border);
-    color: var(--text); padding: 8px 12px; border-radius: 8px;
+    color: var(--text); padding: 8px 10px; border-radius: 8px;
     font-size: 0.82rem; font-family: inherit; outline: none;
+    min-width: 0; flex: 1 1 140px;
   }
   .hist-filters select:focus, .hist-filters input:focus { border-color: var(--accent); }
   .btn-filter {
     background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.3);
-    color: var(--accent); padding: 8px 16px; border-radius: 8px;
-    font-size: 0.82rem; font-weight: 600; cursor: pointer;
+    color: var(--accent); padding: 8px 14px; border-radius: 8px;
+    font-size: 0.82rem; font-weight: 600; cursor: pointer; white-space: nowrap;
   }
   .btn-filter:hover { background: rgba(56,189,248,0.2); }
-  .hist-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
-  .hist-table th { text-align: left; padding: 10px 14px; color: var(--muted); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.8px; border-bottom: 1px solid var(--border); }
-  .hist-table td { padding: 11px 14px; border-bottom: 1px solid rgba(51,65,85,0.5); }
+
+  /* Tabela responsiva com scroll horizontal */
+  .table-wrap { background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .hist-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; min-width: 420px; }
+  .hist-table th { text-align: left; padding: 10px 14px; color: var(--muted); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.8px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  .hist-table td { padding: 10px 14px; border-bottom: 1px solid rgba(51,65,85,0.5); }
   .hist-table tr:hover td { background: rgba(255,255,255,0.03); }
   .pill { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 700; }
   .pill.ok { background: rgba(16,185,129,0.15); color: var(--ok); }
@@ -170,10 +185,9 @@
 
   /* ── PAGE: OTA ── */
   .ota-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-  @media(max-width:700px){ .ota-grid { grid-template-columns: 1fr; } }
   .ota-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 20px; }
   .ota-card h3 { font-size: 0.9rem; font-weight: 700; margin-bottom: 16px; color: var(--accent); }
-  .device-list { display: flex; flex-direction: column; gap: 8px; max-height: 320px; overflow-y: auto; }
+  .device-list { display: flex; flex-direction: column; gap: 8px; max-height: 260px; overflow-y: auto; }
   .device-row {
     display: flex; align-items: center; justify-content: space-between;
     padding: 10px 12px; background: var(--card2); border-radius: 10px;
@@ -187,7 +201,7 @@
   .device-row .dstatus.offline { color: var(--off); }
   .upload-zone {
     border: 2px dashed var(--border); border-radius: 12px;
-    padding: 30px; text-align: center; cursor: pointer;
+    padding: 24px; text-align: center; cursor: pointer;
     transition: all 0.2s; margin-bottom: 14px;
   }
   .upload-zone:hover, .upload-zone.drag { border-color: var(--accent); background: rgba(56,189,248,0.05); }
@@ -206,7 +220,7 @@
   .ota-log {
     background: #0a0f1a; border: 1px solid var(--border); border-radius: 10px;
     padding: 12px; font-family: monospace; font-size: 0.75rem;
-    color: #7dd3fc; height: 180px; overflow-y: auto; margin-top: 14px;
+    color: #7dd3fc; height: 160px; overflow-y: auto; margin-top: 14px;
   }
   .ota-log .log-ok { color: var(--ok); }
   .ota-log .log-err { color: var(--fail); }
@@ -214,32 +228,58 @@
   .ota-info {
     background: rgba(56,189,248,0.06); border: 1px solid rgba(56,189,248,0.2);
     border-radius: 10px; padding: 14px; font-size: 0.8rem; color: var(--muted);
-    line-height: 1.7;
+    line-height: 1.7; margin-top: 16px;
   }
   .ota-info strong { color: var(--text); }
 
   /* ── MODAL ── */
   .modal-overlay {
     display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,0.6); z-index: 100;
+    background: rgba(0,0,0,0.6); z-index: 300;
     align-items: center; justify-content: center;
+    padding: 16px;
   }
   .modal-overlay.open { display: flex; }
   .modal {
     background: var(--sidebar); border: 1px solid var(--border);
-    border-radius: 16px; padding: 24px; width: 360px; max-width: 95vw;
+    border-radius: 16px; padding: 24px; width: 360px; max-width: 100%;
+    max-height: 90vh; overflow-y: auto;
   }
   .modal h2 { font-size: 1rem; font-weight: 700; margin-bottom: 16px; }
-  .modal-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.82rem; }
+  .modal-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.82rem; gap: 8px; }
   .modal-row:last-of-type { border-bottom: none; }
-  .modal-key { color: var(--muted); }
-  .modal-val { font-weight: 600; }
+  .modal-key { color: var(--muted); white-space: nowrap; }
+  .modal-val { font-weight: 600; text-align: right; }
   .btn-close { margin-top: 16px; width: 100%; padding: 9px; border-radius: 8px; background: var(--card2); border: 1px solid var(--border); color: var(--text); cursor: pointer; font-size: 0.85rem; }
 
   /* ── LOADER ── */
   .loader { display: inline-block; width: 13px; height: 13px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
   .empty { text-align: center; padding: 50px; color: var(--muted); font-size: 0.95rem; }
+
+  /* ── BOTTOM NAV (mobile) ── */
+  .bottom-nav {
+    display: none;
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: var(--sidebar); border-top: 1px solid var(--border);
+    z-index: 200; height: var(--navbar-h);
+  }
+  .bottom-nav-inner { display: flex; height: 100%; }
+  .bnav-item {
+    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 3px; cursor: pointer; font-size: 0.62rem; font-weight: 600;
+    color: var(--muted); transition: color 0.2s; padding: 6px 4px;
+    border: none; background: none;
+  }
+  .bnav-item .bicon { font-size: 1.3rem; line-height: 1; }
+  .bnav-item.active { color: var(--accent); }
+
+  /* ── OVERLAY (sidebar mobile) ── */
+  .sidebar-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5); z-index: 190;
+  }
+  .sidebar-overlay.open { display: block; }
 
   /* scrollbar */
   ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -248,12 +288,66 @@
 
   .page { display: none; }
   .page.active { display: block; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    /* Sidebar vira drawer */
+    .sidebar {
+      position: fixed; top: 0; left: 0; bottom: 0;
+      transform: translateX(-100%);
+      box-shadow: 4px 0 20px rgba(0,0,0,0.4);
+    }
+    .sidebar.open { transform: translateX(0); }
+
+    /* Mostra hamburger */
+    .btn-menu { display: block; }
+
+    /* Topbar compacta */
+    .topbar { padding: 10px 14px; }
+    .topbar h1 { font-size: 0.95rem; }
+    .badge { display: none; }
+
+    /* Conteúdo com padding bottom para bottom nav */
+    .content { padding: 14px 12px; padding-bottom: calc(var(--navbar-h) + 14px); }
+
+    /* Stats menores */
+    .stats-row { gap: 8px; margin-bottom: 14px; }
+    .stat-card { padding: 12px 14px; min-width: 80px; }
+    .stat-num { font-size: 1.6rem; }
+    .stat-lbl { font-size: 0.65rem; }
+
+    /* Grid 2 colunas no mobile */
+    .grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+
+    /* OTA em coluna única */
+    .ota-grid { grid-template-columns: 1fr; }
+
+    /* Bottom nav visível */
+    .bottom-nav { display: block; }
+
+    /* Filtros histórico em coluna */
+    .hist-filters { flex-direction: column; }
+    .hist-filters select,
+    .hist-filters input { flex: none; width: 100%; }
+    .btn-filter { width: 100%; text-align: center; }
+  }
+
+  @media (max-width: 400px) {
+    .grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .card { padding: 12px 8px; }
+    .card-name { font-size: 0.68rem; }
+    .dual-circle { width: 38px; height: 38px; }
+    .status-circle { width: 48px; height: 48px; }
+  }
 </style>
 </head>
 <body>
 
+<!-- OVERLAY sidebar mobile -->
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
 <!-- SIDEBAR -->
-<aside class="sidebar">
+<aside class="sidebar" id="sidebar">
   <div class="sidebar-logo">
     <img src="logo_w-1.png" alt="Trivia" onerror="this.style.display='none'">
     <span>TRIVIA</span>
@@ -278,7 +372,10 @@
 <!-- MAIN -->
 <div class="main">
   <div class="topbar">
-    <h1 id="page-title">📡 Monitoramento</h1>
+    <div class="topbar-left">
+      <button class="btn-menu" onclick="toggleSidebar()" aria-label="Menu">☰</button>
+      <h1 id="page-title">📡 Monitoramento</h1>
+    </div>
     <div class="topbar-right">
       <span class="badge ok" id="badge-ok">- OK</span>
       <span class="badge fail" id="badge-fail">- Falha</span>
@@ -315,7 +412,7 @@
         <button class="btn-filter" onclick="fetchHistory()">🔍 Filtrar</button>
         <button class="btn-filter" onclick="clearFilters()">✕ Limpar</button>
       </div>
-      <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;">
+      <div class="table-wrap">
         <table class="hist-table">
           <thead>
             <tr>
@@ -353,8 +450,7 @@
           </div>
           <input type="file" id="ota-file-input" accept=".bin" onchange="handleFileSelect(event)">
           <button class="btn-ota" id="btn-send-ota" onclick="sendOTA()" disabled>⬆️ Enviar Atualização</button>
-
-          <div class="ota-info" style="margin-top:16px">
+          <div class="ota-info">
             <strong>ℹ️ Como funciona o OTA:</strong><br>
             O ESP32 precisa estar na <strong>mesma rede</strong> que este computador.<br><br>
             <strong>Opção 1 — ArduinoOTA</strong> (já no código):<br>
@@ -369,6 +465,21 @@
 
   </div>
 </div>
+
+<!-- BOTTOM NAV (mobile) -->
+<nav class="bottom-nav">
+  <div class="bottom-nav-inner">
+    <button class="bnav-item active" onclick="showPage('monitor')" id="bnav-monitor">
+      <span class="bicon">📡</span><span>Monitor</span>
+    </button>
+    <button class="bnav-item" onclick="showPage('historico')" id="bnav-historico">
+      <span class="bicon">📊</span><span>Histórico</span>
+    </button>
+    <button class="bnav-item" onclick="showPage('ota')" id="bnav-ota">
+      <span class="bicon">⬆️</span><span>OTA</span>
+    </button>
+  </div>
+</nav>
 
 <!-- MODAL DETALHES -->
 <div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
@@ -388,6 +499,16 @@
   let allDevices = [];
   let selectedOtaDevice = null;
   let otaFile = null;
+
+  // ── SIDEBAR MOBILE ──
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('sidebar-overlay').classList.toggle('open');
+  }
+  function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebar-overlay').classList.remove('open');
+  }
 
   // ── UTILS ──
   function parseDate(v) {
@@ -434,12 +555,15 @@
   function showPage(id) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.querySelectorAll('.bnav-item').forEach(n => n.classList.remove('active'));
     document.getElementById('page-' + id).classList.add('active');
     document.getElementById('nav-' + id).classList.add('active');
+    document.getElementById('bnav-' + id).classList.add('active');
     const titles = { monitor: '📡 Monitoramento', historico: '📊 Histórico', ota: '⬆️ Atualização OTA' };
     document.getElementById('page-title').textContent = titles[id];
     if (id === 'historico') fetchHistory();
     if (id === 'ota') renderOtaDevices();
+    closeSidebar();
   }
 
   // ── FETCH DEVICES ──
@@ -464,7 +588,6 @@
     txt.textContent = ok ? 'Conectado' : ('Erro: ' + msg);
   }
 
-  // Extrai o prefixo base de um nome com " - N" no final
   function getBaseName(name) {
     const m = name.match(/^(.+?)\s*-\s*\d+\s*$/);
     return m ? m[1].trim() : null;
@@ -478,9 +601,8 @@
       updateBadges(0,0,0,0); return;
     }
 
-    // Agrupar dispositivos com padrão "NOME - N"
-    const groups = {};   // base -> [device, ...]
-    const singles = [];  // dispositivos sem padrão
+    const groups = {};
+    const singles = [];
 
     data.forEach(t => {
       const base = getBaseName(t.device_name);
@@ -494,23 +616,18 @@
 
     grid.innerHTML = '';
 
-    // Renderizar grupos (pares)
     Object.entries(groups).forEach(([base, members]) => {
-      // Ordenar por número no final do nome
       members.sort((a, b) => {
         const na = parseInt(a.device_name.match(/(\d+)\s*$/)?.[1] || 0);
         const nb = parseInt(b.device_name.match(/(\d+)\s*$/)?.[1] || 0);
         return na - nb;
       });
 
-      // Determinar status geral do card (pior status vence)
       const statuses = members.map(m => getStatus(m));
       const hasFail = statuses.includes('fail');
       const hasOffline = statuses.includes('offline');
-      const allOk = statuses.every(s => s === 'ok');
       const cardClass = hasFail ? 'fail' : hasOffline ? 'offline' : 'ok';
 
-      // Contadores para badges
       statuses.forEach(s => {
         if (s==='ok') ok++; else if (s==='fail') fail++; else off++;
       });
@@ -539,7 +656,6 @@
       grid.appendChild(card);
     });
 
-    // Renderizar singles normalmente
     singles.forEach(t => {
       const st = getStatus(t);
       const label = st === 'ok' ? 'OK' : st === 'fail' ? 'FALHA' : 'OFFLINE';
@@ -724,8 +840,6 @@
 
   async function sendOTA() {
     if (!selectedOtaDevice || !otaFile) return;
-
-    const device = allDevices.find(d => d.device_name === selectedOtaDevice);
     otaLog(`🚀 Iniciando OTA para <strong>${selectedOtaDevice}</strong>...`, 'ok');
     otaLog(`📦 Arquivo: ${otaFile.name} (${(otaFile.size/1024).toFixed(1)} KB)`, 'info');
     otaLog('ℹ️ O ESP32 precisa estar na mesma rede que este computador.', 'info');
