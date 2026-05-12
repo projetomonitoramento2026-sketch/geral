@@ -448,28 +448,107 @@
   }
 
   function renderCards(data) {
-    const grid = document.getElementById('grid');
-    let ok=0, fail=0, off=0;
-    if (!data || !data.length) {
-      grid.innerHTML = '<div class="empty">Nenhuma torre encontrada.</div>';
-      updateBadges(0,0,0,0); return;
-    }
-    grid.innerHTML = '';
-    data.forEach(t => {
-      const st = getStatus(t);
-      const label = st === 'ok' ? 'OK' : st === 'fail' ? 'FALHA' : 'OFFLINE';
-      if (st==='ok') ok++; else if (st==='fail') fail++; else off++;
-      const card = document.createElement('div');
-      card.className = `card ${st}`;
-      card.onclick = () => openModal(t);
-      card.innerHTML = `
-        <div class="card-name" title="${t.device_name}">${t.device_name}</div>
-        <div class="status-circle">${label}</div>
-        <div class="card-footer">🕐 ${timeSince(t.last_seen)}</div>`;
-      grid.appendChild(card);
-    });
-    updateBadges(data.length, ok, fail, off);
+  const grid = document.getElementById('grid');
+
+  let ok = 0, fail = 0, off = 0;
+
+  if (!data || !data.length) {
+    grid.innerHTML = '<div class="empty">Nenhuma torre encontrada.</div>';
+    updateBadges(0,0,0,0);
+    return;
   }
+
+  // AGRUPAR DISPOSITIVOS PELO NOME BASE
+  const grouped = {};
+
+  data.forEach(t => {
+    const baseName = t.device_name.includes(' - ')
+      ? t.device_name.split(' - ')[0].trim()
+      : t.device_name;
+
+    if (!grouped[baseName]) {
+      grouped[baseName] = [];
+    }
+
+    grouped[baseName].push(t);
+  });
+
+  grid.innerHTML = '';
+
+  Object.entries(grouped).forEach(([name, devices]) => {
+
+    // status geral do card
+    let cardStatus = 'ok';
+
+    devices.forEach(d => {
+      const st = getStatus(d);
+
+      if (st === 'fail' && cardStatus !== 'offline') {
+        cardStatus = 'fail';
+      }
+
+      if (st === 'offline') {
+        cardStatus = 'offline';
+      }
+
+      // contadores
+      if (st === 'ok') ok++;
+      else if (st === 'fail') fail++;
+      else off++;
+    });
+
+    // montar bolinhas
+    const dots = devices.map(d => {
+      const st = getStatus(d);
+
+      let color = 'var(--ok)';
+      if (st === 'fail') color = 'var(--fail)';
+      if (st === 'offline') color = 'var(--off)';
+
+      return `
+        <div style="
+          width:14px;
+          height:14px;
+          border-radius:50%;
+          background:${color};
+          box-shadow:0 0 8px ${color};
+        " title="${d.device_name}">
+        </div>
+      `;
+    }).join('');
+
+    const card = document.createElement('div');
+
+    card.className = `card ${cardStatus}`;
+
+    card.onclick = () => openModal(devices[0]);
+
+    card.innerHTML = `
+      <div class="card-name" title="${name}">
+        ${name}
+      </div>
+
+      <div style="
+        display:flex;
+        gap:10px;
+        margin-bottom:14px;
+        align-items:center;
+        justify-content:center;
+        min-height:58px;
+      ">
+        ${dots}
+      </div>
+
+      <div class="card-footer">
+        ${devices.length} dispositivos
+      </div>
+    `;
+
+    grid.appendChild(card);
+  });
+
+  updateBadges(data.length, ok, fail, off);
+}
 
   function updateBadges(total, ok, fail, off) {
     document.getElementById('cnt-total').textContent = total;
